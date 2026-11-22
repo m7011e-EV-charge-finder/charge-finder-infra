@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: charge-finder-infra
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/m7011e-EV-charge-finder/charge-finder-infra.git
+    targetRevision: main
+    path: cluster
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: charge-finder
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
