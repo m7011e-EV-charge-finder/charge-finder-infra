@@ -74,6 +74,15 @@ spec:
       labels:
         app: mongodb
     spec:
+      securityContext:
+        fsGroup: 999
+      initContainers:
+        - name: init-db-dir
+          image: mongo:7
+          command: ["sh", "-c", "mkdir -p /data/db && chown -R 999:999 /data/db"]
+          volumeMounts:
+            - name: mongodb-data
+              mountPath: /data/db
       containers:
         - name: mongodb
           image: mongo:7
