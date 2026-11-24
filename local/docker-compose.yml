@@ -1,0 +1,23 @@
+# Development infrastructure for running the databases locally. Start with:
+#   docker compose -f local/docker-compose.yml up -d
+# The credentials below are for local development only - never reuse them in the cluster.
+services:
+  mongodb:
+    image: mongo:7
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: local_admin
+      MONGO_INITDB_ROOT_PASSWORD: local_password
+      MONGO_INITDB_DATABASE: chargefinder
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongodb-data:/data/db
+    healthcheck:
+      test: ['CMD', 'mongosh', '--eval', "db.adminCommand('ping').ok", '--quiet']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+volumes:
+  mongodb-data:
