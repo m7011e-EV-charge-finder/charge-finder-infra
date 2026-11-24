@@ -87,6 +87,9 @@ spec:
         - name: mongodb
           image: mongo:7
           imagePullPolicy: IfNotPresent
+          securityContext:
+            runAsUser: 999
+            runAsGroup: 999
           args:
             - "--wiredTigerCacheSizeGB"
             - "0.35"
