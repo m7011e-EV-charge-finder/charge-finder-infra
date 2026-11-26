@@ -1,0 +1,26 @@
+namespace: charge-finder
+
+image:
+  repository: mongo
+  tag: "7"
+  pullPolicy: IfNotPresent
+
+storage:
+  size: 5Gi
+  storageClassName: local-path
+
+config:
+  database: chargefinder
+  timezone: Europe/Stockholm
+
+credentialsSecret: mongodb-credentials
+
+wiredTigerCacheSizeGB: "0.35"
+
+resources:
+  requests:
+    cpu: 250m
+    memory: 256Mi
+  limits:
+    cpu: 1000m
+    memory: 1Gi
