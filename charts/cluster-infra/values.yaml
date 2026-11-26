@@ -1,0 +1,38 @@
+namespace: charge-finder
+
+domain: group-12-m7011e-ltu.se
+
+config:
+  keycloakRealm: charge-finder
+  #currently placeholder. replace later with actual postgres service
+  postgresHost: postgres
+  postgresPort: "5432"
+  mongodbHost: mongodb
+  mongodbPort: "27017"
+  redisHost: redis
+  redisPort: "6379"
+  nobilApiBaseUrl: https://nobil.no/api/server
+
+ingress:
+  className: traefik
+  # Keep staging while testing; switch to letsencrypt-prod once verified
+  clusterIssuer: letsencrypt-staging
+  tlsSecretName: charge-finder-tls
+  paths:
+    - path: /auth
+      pathType: Prefix
+      serviceName: keycloak
+      servicePort: 8080
+    - path: /api/users
+      pathType: Prefix
+      serviceName: user-service
+      servicePort: 80
+    - path: /api/chargers
+      pathType: Prefix
+      serviceName: charger-data-service
+      servicePort: 80
+    - path: /
+      pathType: Prefix
+      serviceName: frontend
+      servicePort: 80
+#Todo later: add /ws under ingress.path when adding live updates microservice
