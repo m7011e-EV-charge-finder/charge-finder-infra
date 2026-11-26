@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: charge-finder-config
+  namespace: {{ .Values.namespace }}
+data:
+  DOMAIN: {{ .Values.domain | quote }}
+  KEYCLOAK_URL: {{ printf "https://%s/auth" .Values.domain | quote }}
+  KEYCLOAK_REALM: {{ .Values.config.keycloakRealm | quote }}
+  POSTGRES_HOST: {{ .Values.config.postgresHost | quote }}
+  POSTGRES_PORT: {{ .Values.config.postgresPort | quote }}
+  MONGODB_HOST: {{ .Values.config.mongodbHost | quote }}
+  MONGODB_PORT: {{ .Values.config.mongodbPort | quote }}
+  REDIS_HOST: {{ .Values.config.redisHost | quote }}
+  REDIS_PORT: {{ .Values.config.redisPort | quote }}
+  NOBIL_API_BASE_URL: {{ .Values.config.nobilApiBaseUrl | quote }}

@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: https://github.com/m7011e-EV-charge-finder/charge-finder-infra.git
     targetRevision: main
-    path: cluster
+    path: charts/cluster-infra
   destination:
     server: https://kubernetes.default.svc
     namespace: charge-finder
