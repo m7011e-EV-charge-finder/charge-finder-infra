@@ -21,14 +21,14 @@ spec:
           ports:
             - name: http
               containerPort: {{ .Values.service.targetPort }}
-          {{- if or .Values.configMapRef .Values.secretRef }}
+          {{- if or .Values.configMapRef .Values.secretRefs }}
           envFrom:
             {{- if .Values.configMapRef }}
             - configMapRef:
                 name: {{ .Values.configMapRef }}
             {{- end }}
-            {{- if .Values.secretRef }}
+            {{- range .Values.secretRefs }}
             - secretRef:
-                name: {{ .Values.secretRef }}
+                name: {{ . }}
             {{- end }}
           {{- end }}

@@ -11,4 +11,4 @@ service:
   targetPort: 8080
 
 configMapRef: charge-finder-config
-secretRef: ""
+secretRefs: []

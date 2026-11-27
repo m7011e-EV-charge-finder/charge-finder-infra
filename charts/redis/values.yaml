@@ -1,0 +1,27 @@
+namespace: charge-finder
+
+image:
+  repository: redis
+  tag: "8-alpine"
+  pullPolicy: IfNotPresent
+
+service:
+  port: 6379
+
+# Requires the redis-credentials secret (key: REDIS_PASSWORD) in the same namespace.
+# Microservices that connect to Redis can mount redis-credentials via secretRefs.
+auth:
+  enabled: true
+  credentialsSecret: redis-credentials
+
+cache:
+  maxmemory: 256mb
+  maxmemoryPolicy: allkeys-lru
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 384Mi

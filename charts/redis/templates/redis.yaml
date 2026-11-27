@@ -1,0 +1,91 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: redis
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: {{ .Values.service.port }}
+  selector:
+    app: redis
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-internal
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: redis
+spec:
+  clusterIP: None
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: {{ .Values.service.port }}
+  selector:
+    app: redis
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redis
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: redis
+spec:
+  serviceName: redis-internal
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+        - name: redis
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if .Values.auth.enabled }}
+          command:
+            - sh
+            - -c
+            - >
+              exec redis-server
+              --save ""
+              --appendonly no
+              --maxmemory {{ .Values.cache.maxmemory }}
+              --maxmemory-policy {{ .Values.cache.maxmemoryPolicy }}
+              --requirepass "$REDIS_PASSWORD"
+          envFrom:
+            - secretRef:
+                name: {{ .Values.auth.credentialsSecret }}
+          {{- else }}
+          args:
+            - "--save"
+            - ""
+            - "--appendonly"
+            - "no"
+            - "--maxmemory"
+            - {{ .Values.cache.maxmemory | quote }}
+            - "--maxmemory-policy"
+            - {{ .Values.cache.maxmemoryPolicy | quote }}
+          {{- end }}
+          ports:
+            - containerPort: {{ .Values.service.port }}
+          readinessProbe:
+            tcpSocket:
+              port: {{ .Values.service.port }}
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: {{ .Values.service.port }}
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
